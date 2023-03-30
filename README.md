@@ -8,11 +8,11 @@
 
 ## Plan
 
-- [*] app and chakra setup
-- [*] create form
-- [*] table to show event types
-- [*] update functionality
-- [*] delete functionality
+- app and chakra setup
+- create form
+- table to show event types
+- update functionality
+- delete functionality
 
 ## Svix api key
 
