@@ -1,1 +1,1 @@
-"# svix-task" 
+# svix-task
