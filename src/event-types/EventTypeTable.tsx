@@ -8,18 +8,19 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useQuery } from "react-query";
-import { Svix } from "svix";
+import { useSvixClient } from "../utils/svixClient.context";
 import { EventTypeArchive } from "./EventTypeDelete";
 import { EventTypeEdit } from "./EventTypeEdit";
 
 export function EventTypeTable() {
+  const svixClient = useSvixClient();
+
   const {
     data: eventTypes,
     error,
     isFetching,
   } = useQuery("eventTypes", async () => {
-    const svix = new Svix(process.env.REACT_APP_SVIX_API_KEY as string);
-    const response = await svix.eventType.list();
+    const response = await svixClient.eventType.list();
 
     return response.data;
   });

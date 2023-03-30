@@ -9,7 +9,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "react-query";
-import { EventTypeIn, Svix } from "svix";
+import { EventTypeIn } from "svix";
+import { useSvixClient } from "../utils/svixClient.context";
 import { EventTypeForm } from "./EventTypeForm";
 
 export type EventTypeEditProps = {
@@ -20,12 +21,12 @@ export function EventTypeEdit({ eventType }: EventTypeEditProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const queryClient = useQueryClient();
+  const svixClient = useSvixClient();
 
   const { mutate: editEventType } = useMutation(
     async (modifiedEventType: EventTypeIn) => {
-      const svix = new Svix(process.env.REACT_APP_SVIX_API_KEY as string);
       const { name, ...updateableProps } = modifiedEventType;
-      const result = await svix.eventType.update(name, updateableProps);
+      const result = await svixClient.eventType.update(name, updateableProps);
       queryClient.invalidateQueries("eventTypes");
       return result;
     }

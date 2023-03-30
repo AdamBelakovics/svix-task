@@ -13,7 +13,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "react-query";
-import { Svix } from "svix";
+import { useSvixClient } from "../utils/svixClient.context";
 
 export type EventTypeArchiveProps = {
   eventTypeName: string;
@@ -23,10 +23,10 @@ export function EventTypeArchive({ eventTypeName }: EventTypeArchiveProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const queryClient = useQueryClient();
+  const svixClient = useSvixClient();
 
   const { mutate: archiveEventType, isLoading } = useMutation(async () => {
-    const svix = new Svix(process.env.REACT_APP_SVIX_API_KEY as string);
-    const result = await svix.eventType.delete(eventTypeName);
+    const result = await svixClient.eventType.delete(eventTypeName);
     queryClient.invalidateQueries("eventTypes");
     return result;
   });
