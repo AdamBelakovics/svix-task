@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "react-query";
 import { Svix } from "svix";
+import { EventTypeArchive } from "./EventTypeDelete";
 import { EventTypeEdit } from "./EventTypeEdit";
 
 export function EventTypeTable() {
@@ -19,8 +20,6 @@ export function EventTypeTable() {
   } = useQuery("eventTypes", async () => {
     const svix = new Svix(process.env.REACT_APP_SVIX_API_KEY as string);
     const response = await svix.eventType.list();
-
-    console.log(response.data);
 
     return response.data;
   });
@@ -42,6 +41,7 @@ export function EventTypeTable() {
             <Th>Description</Th>
             <Th>Feature Flag</Th>
             <Th>Edit</Th>
+            <Th>Archive</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -52,6 +52,9 @@ export function EventTypeTable() {
               <Td>{eventType.featureFlag}</Td>
               <Td>
                 <EventTypeEdit eventType={eventType} />
+              </Td>
+              <Td>
+                <EventTypeArchive eventTypeName={eventType.name} />
               </Td>
             </Tr>
           ))}
