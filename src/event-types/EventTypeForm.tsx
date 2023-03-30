@@ -9,11 +9,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
-import { useMutation, useQueryClient } from "react-query";
-import { EventTypeIn, Svix } from "svix";
+import { EventTypeIn } from "svix";
 import { object, string } from "yup";
-
-const initialValues = { name: "", description: "", featureFlag: "" };
 
 const eventTypeSchema = object({
   name: string().required(),
@@ -23,25 +20,28 @@ const eventTypeSchema = object({
 
 export type EventTypeFormProps = {
   onClose: () => void;
+  onSubmit: (eti: EventTypeIn) => void;
+  initialValues?: { name: string; description: string; featureFlag?: string };
+  nameEditable?: boolean;
 };
 
-export function EventTypeForm({ onClose }: EventTypeFormProps) {
-  const queryClient = useQueryClient();
-
-  const { mutate: createEventType } = useMutation(
-    async (newEventType: EventTypeIn) => {
-      const svix = new Svix(process.env.REACT_APP_SVIX_API_KEY as string);
-      const result = await svix.eventType.create(newEventType);
-      queryClient.invalidateQueries("eventTypes");
-      return result;
-    }
-  );
-
+export function EventTypeForm({
+  onClose,
+  onSubmit,
+  initialValues = { name: "", description: "", featureFlag: "" },
+  nameEditable = true,
+}: EventTypeFormProps) {
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={(values) => {
-        createEventType(values);
+        // Todo replace with generic sanitization
+        const sanitizedValues = {
+          ...values,
+          featureFlag:
+            values.featureFlag === "" ? undefined : values.featureFlag,
+        };
+        onSubmit(sanitizedValues);
         onClose();
       }}
       validationSchema={eventTypeSchema}
@@ -49,7 +49,10 @@ export function EventTypeForm({ onClose }: EventTypeFormProps) {
       {({ handleSubmit, errors, touched, isSubmitting }) => (
         <form onSubmit={handleSubmit}>
           <VStack spacing={5}>
-            <FormControl isInvalid={!!errors.name && touched.name}>
+            <FormControl
+              isInvalid={!!errors.name && touched.name}
+              isDisabled={!nameEditable}
+            >
               <FormLabel>Name</FormLabel>
               <Field as={Input} name="name" variant="filled"></Field>
               <FormErrorMessage>{errors.name}</FormErrorMessage>
@@ -73,9 +76,9 @@ export function EventTypeForm({ onClose }: EventTypeFormProps) {
                 colorScheme="teal"
                 type="submit"
                 isLoading={isSubmitting}
-                loadingText="Creating..."
+                loadingText="Saving..."
               >
-                Create
+                Save
               </Button>
               <Button variant="ghost" mr={3} onClick={onClose}>
                 Close

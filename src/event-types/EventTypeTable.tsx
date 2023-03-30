@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "react-query";
 import { Svix } from "svix";
+import { EventTypeEdit } from "./EventTypeEdit";
 
 export function EventTypeTable() {
   const {
@@ -40,6 +41,7 @@ export function EventTypeTable() {
             <Th>Name</Th>
             <Th>Description</Th>
             <Th>Feature Flag</Th>
+            <Th>Edit</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -48,6 +50,9 @@ export function EventTypeTable() {
               <Td>{eventType.name}</Td>
               <Td>{eventType.description}</Td>
               <Td>{eventType.featureFlag}</Td>
+              <Td>
+                <EventTypeEdit eventType={eventType} />
+              </Td>
             </Tr>
           ))}
         </Tbody>
